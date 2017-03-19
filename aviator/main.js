@@ -12,6 +12,12 @@ function init() {
     createSea();
     createSky();
 
+    // animate pilot hair
+    airplane.pilot.updateHairs();
+
+    // animate waves
+    sea.moveWaves();
+
     document.addEventListener('mousemove', handleMouseMove, false);
 
     loop();
@@ -112,9 +118,13 @@ function createLights() {
     shadowLight.shadow.camera.width = 2048;
     shadowLight.shadow.camera.height = 2048;
 
+    // ambient light softens shadows
+    const ambientLight = new THREE.AmbientLight(0xdc8874, .5);
+
     // add to scene to activate
     scene.add(hemisphereLight);
     scene.add(shadowLight);
+    scene.add(ambientLight);
 }
 
 var sea;
@@ -148,10 +158,7 @@ function loop() {
     sky.mesh.rotation.z += .01;
 
     updatePlane();
-
     renderer.render(scene, camera);
-
-    // call loop function again
     requestAnimationFrame(loop);
 }
 
@@ -174,9 +181,13 @@ function updatePlane() {
     var targetX = normalize(mousePos.x, -1, 1, -100, 100);
     var targetY = normalize(mousePos.y, -1, 1, 25, 175);
 
-    // update plane position
-    airplane.mesh.position.x = targetX;
-    airplane.mesh.position.y = targetY;
+    // move plane at each frame by adding fraction of remaining distance
+    airplane.mesh.position.y = (targetY - airplane.mesh.position.y)*.0128;
+
+    // rotate plane proportionally to remaining distance
+    airplane.propeller.rotation.z = (targetY - airplane.mesh.position.y)*.0128;
+    airplane.propeller.rotation.x = (airplane.mesh.position.y - targetY)*.0064;
+
     airplane.propeller.rotation.x += .3;
 }
 
