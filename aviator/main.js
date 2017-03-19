@@ -1,17 +1,5 @@
 // https://tympanus.net/codrops/2016/04/26/the-aviator-animating-basic-3d-scene-threejs/
 
-const Colors = {
-	red:0xf25346,
-	white:0xd8d0d1,
-	brown:0x59332e,
-	pink:0xF5986E,
-	brownDark:0x23190f,
-	blue:0x68c3c0,
-    bg:0xf7d9aa
-};
-
-window.addEventListener('load', init, false);
-
 function init() {
     // set up scene, camera, renderer
     createScene();
@@ -23,6 +11,8 @@ function init() {
     createPlane();
     createSea();
     createSky();
+
+    document.addEventListener('mousemove', handleMouseMove, false);
 
     loop();
 }
@@ -99,7 +89,7 @@ function createLights() {
     // first param = sky color
     // second param = ground color
     // third param = light intensity
-    hemisphereLight = new THREE.HemispherLight(0xaaaaaa, 0x000000, 0.9);
+    hemisphereLight = new THREE.HemisphereLight(0xaaaaaa, 0x000000, 0.9);
 
     // directional light
     shadowLight = new THREE.DirectionalLight(0xffffff, 0.9);
@@ -126,3 +116,77 @@ function createLights() {
     scene.add(hemisphereLight);
     scene.add(shadowLight);
 }
+
+var sea;
+function createSea() {
+    sea = new Sea();
+
+    // push to bottom of scene
+    sea.mesh.position.y = -600;
+    scene.add(sea.mesh);
+}
+
+var sky;
+function createSky() {
+    sky = new Sky();
+    sky.mesh.position.y = -600;
+    scene.add(sky.mesh);
+}
+
+var airplane;
+function createPlane() {
+    airplane = new Airplane();
+    airplane.mesh.scale.set(.25,.25,.25);
+    airplane.mesh.position.y = 100;
+    scene.add(airplane.mesh);
+}
+
+function loop() {
+    // rotate propeller, sea, and sky
+    airplane.propeller.rotation.x += .3;
+    sea.mesh.rotation.z += .005;
+    sky.mesh.rotation.z += .01;
+
+    updatePlane();
+
+    renderer.render(scene, camera);
+
+    // call loop function again
+    requestAnimationFrame(loop);
+}
+
+var mousePos = {
+    x: 0, y: 0
+};
+function handleMouseMove(e) {
+    // convert mouse position value received 
+    // to normalized value b/w -1 and 1
+    // inverse for vertical axis b/c 2D y-axis goes opposite direction of 3D y-axis
+    mousePos.x = -1 + (e.clientX / WIDTH) * 2;
+    mousePos.y = 1 - (e.clientY / HEIGHT) * 2;
+}
+
+// update plane frame
+function updatePlane() {
+    // move plane b/w -100 and 100 horizontally
+    // 25-175 vertically
+    // depending on normalized mouse pos
+    var targetX = normalize(mousePos.x, -1, 1, -100, 100);
+    var targetY = normalize(mousePos.y, -1, 1, 25, 175);
+
+    // update plane position
+    airplane.mesh.position.x = targetX;
+    airplane.mesh.position.y = targetY;
+    airplane.propeller.rotation.x += .3;
+}
+
+function normalize(v, vmin, vmax, tmin, tmax) {
+    // ensures relative position, nv, w/in -1 and 1
+    var nv = Math.max(Math.min(v, vmax), vmin);
+    var dv = vmax - vmin;
+    var pc = (nv - vmin)/dv;
+    var dt = tmax - tmin;
+    var tv = tmin + pc*dt;
+    return tv;
+}
+window.addEventListener('load', init, false);
