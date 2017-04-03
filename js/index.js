@@ -1,2 +1,2 @@
-import currScript from './jellyfish';
+import './jellyfishScene';
 
