@@ -1,3 +1,6 @@
+const THREE = require('three');
+const OrbitControls = require('three-orbit-controls')(THREE);
+
 var WIDTH = window.innerWidth;
 var HEIGHT = window.innerHeight;
 var renderer, scene, camera, controls;
@@ -21,11 +24,11 @@ function makeScene(target, ...objs) {
         1,
         500
     );
-    camera.position.set(0, 0, -200);
+    camera.position.set(0, 0, -150);
     camera.lookAt(new THREE.Vector3(0, 0, 0));
 
     // add controls
-    controls = new THREE.OrbitControls(camera);
+    controls = new OrbitControls(camera);
 
     // scene
     scene = new THREE.Scene();

@@ -1,0 +1,2 @@
+import currScript from './jellyfish';
+
