@@ -13,12 +13,18 @@ export default class Jellyfish {
         // top of jelly
         const top = height / 2;
 
+        // extra radial distance to prevent weird overlapping
+        const extraRadialDist = .01;
+
         // vertex increments along surface arc
         var points = [];
         const step = 1 / (nSegments - 1);
         for (var i = 0; i < nSegments; i += 1) {
             points.push(
-                new THREE.Vector2(i * radius * step, top - (i * i) * (step * step) * height)
+                new THREE.Vector2(
+                    extraRadialDist + i * radius * step,
+                    top - (i * i) * (step * step) * height
+                )
             );
         }
         var geometry = new THREE.LatheGeometry(points);
@@ -30,6 +36,8 @@ export default class Jellyfish {
         this.mesh = new THREE.Mesh(geometry, material);
     }
 
-    ripple() { }
+    ripple() {
+
+    }
 
 }
