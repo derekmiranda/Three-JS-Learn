@@ -73,11 +73,13 @@ function animate() {
     // shifting b/w diff vertices of jelly
     const verticesLen = jelly.mesh.geometry.vertices.length;
     const moveJellyVertices = (function() {
-        var shiftingIdx = 0;
+        var shiftingIdx;
+        var moveDist = .5;
         return function() {
             shiftingIdx = Math.floor(verticesLen * Math.random());
-            console.log(shiftingIdx);
-            jelly.mesh.geometry.vertices[shiftingIdx].y += 1;
+            jelly.mesh.geometry.vertices[shiftingIdx].x += moveDist*(-1 + 2*moveDist*Math.random());
+            jelly.mesh.geometry.vertices[shiftingIdx].y += moveDist*(-1 + 2*moveDist*Math.random());
+            jelly.mesh.geometry.vertices[shiftingIdx].z += moveDist*(-1 + 2*moveDist*Math.random());
         };
     })();
 
