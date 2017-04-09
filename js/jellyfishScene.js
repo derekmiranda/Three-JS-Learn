@@ -66,24 +66,18 @@ function makeScene(target, ...objs) {
 
 var jelly = new Jellyfish(20, 20, 10);
 makeScene(jelly.mesh);
-animate();
+
+let shiftingIdx;
+const moveDist = .5;
+// shifting b/w diff vertices of jelly
+const verticesLen = jelly.mesh.geometry.vertices.length;
 
 function animate() {
 
-    // shifting b/w diff vertices of jelly
-    const verticesLen = jelly.mesh.geometry.vertices.length;
-    const moveJellyVertices = (function() {
-        var shiftingIdx;
-        var moveDist = .5;
-        return function() {
-            shiftingIdx = Math.floor(verticesLen * Math.random());
-            jelly.mesh.geometry.vertices[shiftingIdx].x += moveDist*(-1 + 2*moveDist*Math.random());
-            jelly.mesh.geometry.vertices[shiftingIdx].y += moveDist*(-1 + 2*moveDist*Math.random());
-            jelly.mesh.geometry.vertices[shiftingIdx].z += moveDist*(-1 + 2*moveDist*Math.random());
-        };
-    })();
-
-    setTimeout(moveJellyVertices, 100);
+    shiftingIdx = Math.floor(verticesLen * Math.random());
+    jelly.mesh.geometry.vertices[shiftingIdx].x += moveDist * (-1 + 2 * moveDist * Math.random());
+    jelly.mesh.geometry.vertices[shiftingIdx].y += moveDist * (-1 + 2 * moveDist * Math.random());
+    jelly.mesh.geometry.vertices[shiftingIdx].z += moveDist * (-1 + 2 * moveDist * Math.random());
 
     // tell renderer that geometry needs to be updated
     jelly.mesh.geometry.verticesNeedUpdate = true;
@@ -91,3 +85,4 @@ function animate() {
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
 }
+animate();
