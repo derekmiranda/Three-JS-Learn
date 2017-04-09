@@ -52,9 +52,6 @@ function makeScene(target, ...objs) {
     objs.forEach(obj => scene.add(obj));
     renderer.render(scene, camera);
 
-    // animation loop
-    animate();
-
     // update camera and renderer size on window resize
     window.addEventListener('resize', () => {
         // update height and width of renderer and camera
@@ -67,11 +64,28 @@ function makeScene(target, ...objs) {
         false);
 }
 
-function animate() {
-    requestAnimationFrame(animate);
-    controls.update();
-    renderer.render(scene, camera);
-}
-
 var jelly = new Jellyfish(20, 20, 10);
 makeScene(jelly.mesh);
+animate();
+
+function animate() {
+
+    // shifting b/w diff vertices of jelly
+    const verticesLen = jelly.mesh.geometry.vertices.length;
+    const moveJellyVertices = (function() {
+        var shiftingIdx = 0;
+        return function() {
+            shiftingIdx = Math.floor(verticesLen * Math.random());
+            console.log(shiftingIdx);
+            jelly.mesh.geometry.vertices[shiftingIdx].y += 1;
+        };
+    })();
+
+    setTimeout(moveJellyVertices, 100);
+
+    // tell renderer that geometry needs to be updated
+    jelly.mesh.geometry.verticesNeedUpdate = true;
+
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+}
